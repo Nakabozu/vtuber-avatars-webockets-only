@@ -4,7 +4,7 @@ import https from "https";
 import { Server } from "socket.io";
 import { readFileSync } from "fs";
 
-const PORT = process.env.PORT || 5674;
+const PORT = process.env.PORT || 443;
 const app = express();
 app.use(cors());
 
@@ -63,5 +63,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
-    console.log(`Server is hosting your websockets`);
+    console.log(`Server is hosting your websockets at port ${PORT}`);
 });    
