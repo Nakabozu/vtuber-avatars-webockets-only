@@ -56,10 +56,11 @@ io.on("connection", (socket) => {
         return callback(usersEmotions);
     })
 
-    socket.on("client_sets_emotion", (user, emotion) => {
+    socket.on("client_sets_emotion", (user, emotion, callback) => {
         if(isAllowedUser(user)){
             usersEmotions[user] = String(emotion);
             io.emit("server_updates_emotions", usersEmotions);
+            callback(usersEmotions[user]);
             console.log(`${user} is now ${emotion}`)
         }else{
             socket.emit("nope");
