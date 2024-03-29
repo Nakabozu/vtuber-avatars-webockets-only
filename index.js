@@ -29,6 +29,28 @@ app.get('/', (req, res) => {
     res.end();
 });
 
+app.get('/control', (req, res) => {
+    try{
+        let success = false;
+
+        if(
+            req.params?.user
+            && req.params?.emotion
+            && Object.keys(usersEmotions).includes(req.params?.user)
+        ){
+            usersEmotions[req.params?.user] = String(req.params?.emotion);
+            success = true;
+        }
+    
+        res.write(`<h1>${success ? "Successfully made" : "Could not make"} ${req?.params?.user} ${req?.params?.emotion}</h1>`);
+        res.end();
+    }catch(err){
+        console.error(err);
+        res.write(`<h1>Big oof... ${req.params}</h1>`);
+        res.end();
+    }
+})
+
 const io = new Server(server
         , {
         handlePreflightRequest: (req, res) => {
