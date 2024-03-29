@@ -24,8 +24,7 @@ const isAllowedUser = (user) => {
     return Object.keys(usersEmotions).includes(user);
 }
 
-const io = new Server(server
-        , {
+const io = new Server(server, {
         handlePreflightRequest: (req, res) => {
             const headers = {
                 "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -81,20 +80,20 @@ app.get('/control', (req, res) => {
         let success = false;
 
         if(
-            req.params?.user
-            && req.params?.emotion
-            && Object.keys(usersEmotions).includes(req.params?.user)
+            req.query?.user
+            && req.query?.emotion
+            && Object.keys(usersEmotions).includes(req.query?.user)
         ){
-            usersEmotions[req.params?.user] = String(req.params?.emotion);
+            usersEmotions[req.query?.user] = String(req.query?.emotion);
             success = true;
             io.emit("server_updates_emotions", usersEmotions);
         }
     
-        res.write(`<h1>${success ? "Successfully made" : "Could not make"} ${req?.params?.user} ${req?.params?.emotion}</h1>`);
+        res.write(`<h1>${success ? "Successfully made" : "Could not make"} ${req?.query?.user} ${req?.query?.emotion}</h1>`);
         res.end();
     }catch(err){
         console.error(err);
-        res.write(`<h1>Big oof... ${req.params}</h1>`);
+        res.write(`<h1>Big oof... ${req.query}</h1>`);
         res.end();
     }
 });
