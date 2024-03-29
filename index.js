@@ -24,33 +24,6 @@ const isAllowedUser = (user) => {
     return Object.keys(usersEmotions).includes(user);
 }
 
-app.get('/', (req, res) => {
-    res.write(`<h1>Socket IO Started on Port : ${PORT}</h1>`);
-    res.end();
-});
-
-app.get('/control', (req, res) => {
-    try{
-        let success = false;
-
-        if(
-            req.params?.user
-            && req.params?.emotion
-            && Object.keys(usersEmotions).includes(req.params?.user)
-        ){
-            usersEmotions[req.params?.user] = String(req.params?.emotion);
-            success = true;
-        }
-    
-        res.write(`<h1>${success ? "Successfully made" : "Could not make"} ${req?.params?.user} ${req?.params?.emotion}</h1>`);
-        res.end();
-    }catch(err){
-        console.error(err);
-        res.write(`<h1>Big oof... ${req.params}</h1>`);
-        res.end();
-    }
-})
-
 const io = new Server(server
         , {
         handlePreflightRequest: (req, res) => {
@@ -98,4 +71,30 @@ server.listen(PORT, () => {
     console.log(`Server is hosting your websockets at port ${PORT}`);
 });    
 
+app.get('/', (req, res) => {
+    res.write(`<h1>Socket IO Started on Port : ${PORT}</h1>`);
+    res.end();
+});
 
+app.get('/control', (req, res) => {
+    try{
+        let success = false;
+
+        if(
+            req.params?.user
+            && req.params?.emotion
+            && Object.keys(usersEmotions).includes(req.params?.user)
+        ){
+            usersEmotions[req.params?.user] = String(req.params?.emotion);
+            success = true;
+            io.emit("server_updates_emotions", usersEmotions);
+        }
+    
+        res.write(`<h1>${success ? "Successfully made" : "Could not make"} ${req?.params?.user} ${req?.params?.emotion}</h1>`);
+        res.end();
+    }catch(err){
+        console.error(err);
+        res.write(`<h1>Big oof... ${req.params}</h1>`);
+        res.end();
+    }
+});
